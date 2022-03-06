@@ -1,0 +1,19 @@
+{
+	"name": "hwao/wargaming-api-client",
+
+	"require": {
+		"php": ">=8.1",
+		"monolog/monolog": "^2.3"
+	},
+
+	"require-dev": {
+		"phpunit/phpunit": "^9"
+	},
+
+	"autoload": {
+		"psr-4": {
+			"hwao\\WargamingApi\\": "srcApi/",
+			"hwao\\WargamingClanBot\\": "srcClanBot/"
+		}
+	}
+}

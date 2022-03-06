@@ -1,0 +1,6 @@
+/.idea/
+/vendor/
+/var/
+.phpunit.result.cache
+/fame_player/
+/fame/
