@@ -4,19 +4,22 @@ namespace hwao\WargamingClanBot;
 
 class ReserveScheduleBuilder
 {
-	public static function buildSchedule(\DateTimeImmutable $now) : \hwao\WargamingClanBot\ReserveSchedule\StandardReserveSchedule
+	public static function buildSchedule(\DateTimeImmutable $now): \hwao\WargamingClanBot\ReserveSchedule\StandardReserveSchedule
 	{
-		// mozna dodac rozne eventy
+		$dayOfTheWeek = (int)$now->format('N');
 
-		// Wydarzenie Konfrontacja zacznie się 7 lutego o godz. 09:00 CET i będzie trwało do 21 lutego do godz. 09:00 CET (UTC+1). Ostatnim dniem bitew jest 20 luty.
-		$a = new \DateTimeImmutable('2022-02-07');
-		$b = new \DateTimeImmutable('2022-02-20');
-		if( $now >= $a && $now <= $b ) {
-			// jakies extra rezerw
+		// Ranked Battles
+		// March 7, 2022, at 10:00 CET through March 20, 2022, at 10:00 CET (UTC+1)
+		$a = new \DateTimeImmutable('2022-03-07');
+		$b = new \DateTimeImmutable('2022-03-20');
+		if ($now >= $a && $now <= $b) {
+			if( $dayOfTheWeek != 6 ) {
+				// Na czas rankedow leci extra hajs (z wylaczeniem sobot, gdzie jest rozpiska na gry wojenne)
+				return new \hwao\WargamingClanBot\ReserveSchedule\ExtraMoneyReserveSchedule($now);
+			}
 		}
 
-
-		switch( (int) $now->format('N') ) {
+		switch ($dayOfTheWeek) {
 			case 6: // sobota
 				return new \hwao\WargamingClanBot\ReserveSchedule\WarGamesReserveSchedule($now);
 			case 7: // niedziela
