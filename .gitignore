@@ -4,3 +4,4 @@
 .phpunit.result.cache
 /fame_player/
 /fame/
+/composer.lock
