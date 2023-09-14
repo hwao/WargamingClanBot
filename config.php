@@ -1,6 +1,6 @@
 <?php
 
 return [
-	'application_id' => 'abc'
+	'application_id' => 'abc',
 	'discord' => '', // webhook url
 ];
