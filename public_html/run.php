@@ -2,6 +2,7 @@
 
 set_time_limit(60);
 
+
 include __DIR__ . '/../vendor/autoload.php';
 
 // create a log channel
@@ -23,6 +24,29 @@ if ($now <= $start) {
 if ($now >= $end) {
 	$log->info(sprintf('PRZERWANE, po %d:%d', intdiv($end, 60), $end % 60));
 	die();
+}
+
+function sendMsg( $msg ) {
+	$object = new stdClass();
+	$object->username = 'Bot Rezerwy';
+	$object->content = $msg;
+
+	$ch = curl_init();
+
+	curl_setopt($ch, CURLOPT_URL, $discord );
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($object) );
+
+	$headers = array();
+	$headers[] = 'Content-Type: application/json';
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+	$result = curl_exec($ch);
+	if (curl_errno($ch)) {
+		echo 'Error:' . curl_error($ch);
+	}
+	curl_close($ch);
 }
 
 function godzina(int $h, int $m): int
@@ -47,6 +71,7 @@ $accessTokenStore = new \hwao\WargamingClanBot\AccessTokenStore(__DIR__ . '/../v
 
 $config = (array) include __DIR__ . '/../config.php';
 $application_id = $config['application_id'];
+$discord = $config['discord'];
 $access_token = $accessTokenStore->get();
 
 $wargamingClient = new \hwao\WargamingApi\Client\WargamingClient($application_id, $log);
@@ -97,11 +122,20 @@ $drugaRezerwa = $reserveSchedule->getDruga();
 $log->info('Odpalam druga rezerwe: ' . $drugaRezerwa);
 $response1 = $strongholdClient->activateAvailableClanReserve($access_token, 10, $drugaRezerwa);
 
+if( isset( $response1->status ) && $response1->status == 'ok' ) {
+	sendMsg( 'Uruchomiona rezerwa: '.$drugaRezerwa.' X', $discord );
+}
+
 sleep(1);
 
 $log->info('Odpalam pierwsza rezerwe: ' . $powinnaByc);
 $response2 = $strongholdClient->activateAvailableClanReserve($access_token, 10, $powinnaByc);
 
+if( isset( $response2->status ) && $response2->status == 'ok' ) {
+	sendMsg( 'Uruchomiona rezerwa: '.$powinnaByc.' X', $discord );
+}
+
+// {"status":"ok","meta":{"count":1},"data":{"activated_at":"2023-03-08T14:46:50"}} [] []
 
 
 
